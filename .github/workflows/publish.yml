@@ -32,4 +32,17 @@ jobs:
       # Trusted publishing needs npm >= 11.5.1; setup-node ships a recent npm.
       - run: npm install --global npm@latest
       - run: npm test
+      # Idempotent: tagging the version that was bootstrapped by hand must not
+      # turn CI red.
+      - name: Is this version already on the registry?
+        id: exists
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          if npm view "dsh-web-firecrawl@$VERSION" version >/dev/null 2>&1; then
+            echo "published=true" >> "$GITHUB_OUTPUT"
+            echo "dsh-web-firecrawl@$VERSION is already published — nothing to do."
+          else
+            echo "published=false" >> "$GITHUB_OUTPUT"
+          fi
       - run: npm publish
+        if: steps.exists.outputs.published == 'false'
