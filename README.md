@@ -213,11 +213,19 @@ which would turn a one-command install into account + PAT + `~/.npmrc` setup for
 Releases go through `.github/workflows/publish.yml` on a `v*` tag, using npm **trusted publishing**
 (OIDC) — no long-lived token, provenance attached automatically. Two one-time steps:
 
-1. The **first** version has to be published outside CI (`npm login && npm publish`) because a
-   trusted publisher is configured on a package that already exists.
-2. Then on npmjs.com: package → Settings → Trusted Publisher → GitHub Actions
-   (this repository, workflow `publish.yml`), and optionally
-   Settings → Publishing access → *Require two-factor authentication and disallow tokens*.
+1. The **first** version must be published outside CI (`npm publish` with an OTP). npm has no
+   equivalent of PyPI's "pending publisher": configuring trust for a package that does not exist yet
+   fails with `404 Package not found` from `POST /-/package/<name>/trust`.
+2. Then bind the repository to the package. Either the website
+   (package → Settings → Trusted Publisher → GitHub Actions) or, scriptable:
+
+   ```sh
+   npm trust github <package> --file publish.yml --repository <owner>/<repo> --allow-publish
+   ```
+
+   Both `--file` (workflow file name) and `--repository` (must match `repository.url` in
+   package.json) are checked. Then optionally: Settings → Publishing access →
+   *Require two-factor authentication and disallow tokens*.
 
 After that, a release is:
 
