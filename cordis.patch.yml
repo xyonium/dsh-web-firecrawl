@@ -1,0 +1,26 @@
+# Patch layer this bundle contributes when a profile lists it in
+# `dsh.profile.bundles` — which `dsh plugin --profile web add dsh-web-firecrawl`
+# does for you.
+#
+# It only PICKS Firecrawl as the provider and MOUNTS this package. Endpoints and
+# credentials are NOT baked in, for a concrete reason: cordis patches REPLACE a
+# config object rather than merging it (`target[key] = value`). A shipped
+# `baseURL` would be silently dropped the moment anyone set `config:` on the same
+# id in their own layer — and the fallback is the PUBLIC metered API, i.e. real
+# money spent by accident.
+#
+# Configure the endpoint through the launch environment instead:
+#
+#   FIRECRAWL_BASE_URL=https://firecrawl.example.com   # self-hosted, no key needed
+#   FIRECRAWL_API_KEY=fc-...                           # only for api.firecrawl.dev
+#
+# Both are read through DSH's launch-environment snapshot, so a project `.env`
+# works and no per-user patch is required.
+- id: web
+  config:
+    searchProvider: firecrawl
+    fetchProvider: firecrawl
+
+- insert:
+    - id: web-firecrawl
+      name: 'dsh-web-firecrawl'
