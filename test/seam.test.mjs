@@ -42,12 +42,12 @@ let code3 = ''
 try { await web3.search({ query: 'x', maxResults: 1 }) } catch (e) { code3 = e.code ?? e.message }
 check('无 key + 公网默认 → seam 判定不可用', /UNAVAILABLE|unavailable/i.test(code3), String(code3).slice(0, 60))
 
-// 4. 无 key + 显式私有端点（rotator 形态）→ 可用且真能搜
+// 4. 无 key + 显式私有端点（无 key 代理形态）→ 可用且真能搜
 const ctx4 = new Context()
 const web4 = new WebRuntime(ctx4, { searchProvider: 'firecrawl' })
 mod.apply(ctx4, { baseURL: process.env.FIRECRAWL_TEST_BASE_URL ?? 'https://api.firecrawl.dev', apiKey: '' })
 const keyless = await web4.search({ query: 'clickhouse ttl basic example', maxResults: 2 })
-check('无 key + rotator 端点 → 可用并可搜（真实调用）', keyless.sources.length > 0, `${keyless.sources.length} 条`)
+check('无 key + 私有端点 → 可用并可搜（真实调用）', keyless.sources.length > 0, `${keyless.sources.length} 条`)
 
 console.log(`\n${results.filter(Boolean).length}/${results.length} passed`)
 process.exit(results.every(Boolean) ? 0 : 1)

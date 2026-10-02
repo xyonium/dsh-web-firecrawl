@@ -39,26 +39,20 @@
  * compatibility preflight (which only reads a plugin's `peerDependencies`) has
  * nothing to deny and this survives dsh upgrades.
  *
- * INSTALL (profile dir, e.g. ~/.dsh/profiles/web)
- *   1. copy to  <profile>/local/firecrawl-web-provider.mjs
- *      (the .mjs extension matters: without it Node warns and reparses the file
- *       on every boot, because the profile's package.json has no "type": "module")
- *   2. in <profile>/cordis.patch.yml:
+ * INSTALL
  *
- *        - id: web
- *          config:
- *            searchProvider: firecrawl
- *            fetchProvider: firecrawl
- *        - insert:
- *            - id: web-firecrawl
- *              name: ./local/firecrawl-web-provider.mjs
- *              config:
- *                baseURL: https://firecrawl.savorcare.com
- *                apiKey: fc-local
+ *   dsh plugin --profile web add dsh-web-firecrawl
  *
- *      (drop the old `web-search-firecrawl` / `web-fetch-firecrawl` entries, and
- *      remove `@firecrawl/dsh-firecrawl` from `dsh.profile.bundles`)
- *   3. restart dsh — profile config is composed at boot
+ * That runs pnpm inside the profile and registers this package in
+ * `dsh.profile.bundles`; this package's own cordis.patch.yml then selects
+ * Firecrawl as the provider and mounts the plugin. Restart dsh afterwards —
+ * profile config is composed at boot.
+ *
+ * Point it at your endpoint through the environment (project `.env` or the
+ * launching environment), not through a per-user patch:
+ *
+ *   FIRECRAWL_BASE_URL=https://firecrawl.example.com   # self-hosted, no key needed
+ *   FIRECRAWL_API_KEY=fc-...                           # only for api.firecrawl.dev
  */
 
 /** Both capabilities register under this id; keep it in sync with `- id: web`. */
