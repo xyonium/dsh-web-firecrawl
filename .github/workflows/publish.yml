@@ -11,9 +11,15 @@ on:
 # first fails with `404 Package not found`):
 #   1. npmjs.com → the package → Settings → Trusted Publisher → GitHub Actions
 #      (organization/user + repository + workflow file name: publish.yml),
-#      or the CLI equivalent:
+#      or the CLI equivalent (npm >= 11.15.0):
 #        npm trust github <package> --file publish.yml \
 #          --repository <owner>/<repo> --allow-publish
+#      `--allow-publish` matters: configurations created after 2026-09-03 default
+#      to stage-publish only, and a direct `npm publish` would then be rejected.
+#
+# If this job fails with ENEEDAUTH, the workflow filename or `repository.url` does
+# not match what was configured on npmjs.com — npm only validates them at publish
+# time, never when the configuration is saved.
 #   2. then Settings → Publishing access → "Require two-factor authentication and
 #      disallow tokens" (OIDC keeps working)
 #
