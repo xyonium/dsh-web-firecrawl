@@ -1,6 +1,6 @@
 {
   "name": "dsh-web-firecrawl",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Firecrawl as the DeepSeek Harness web backend: query routing, on-demand enrichment, credit budgets and failure memory for web_search/web_fetch.",
   "license": "MIT",
   "type": "module",
