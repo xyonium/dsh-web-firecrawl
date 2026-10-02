@@ -1,0 +1,10 @@
+# Public Firecrawl API: metered, so keep a key in the environment and let the
+# plugin's credit budget guard you. Remember that a `config:` block REPLACES the
+# whole config for this entry, so repeat every value you want to keep.
+- id: web-firecrawl
+  config:
+    # baseURL defaults to https://api.firecrawl.dev
+    enrichTopK: 1
+    enrichMode: adaptive
+    budgetWindowCredits: 60
+    minRemainingCredits: 50

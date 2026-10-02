@@ -1,0 +1,55 @@
+{
+  "name": "dsh-web-firecrawl",
+  "version": "0.1.0",
+  "description": "Firecrawl as the DeepSeek Harness web backend: query routing, on-demand enrichment, credit budgets and failure memory for web_search/web_fetch.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "cordis.patch.yml",
+    "README.md",
+    "README.zh-CN.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "scripts": {
+    "test": "node test/plan-and-failure.test.mjs && node test/coverage.test.mjs && node test/billing.test.mjs",
+    "test:live": "node test/live.test.mjs",
+    "test:seam": "node test/seam.test.mjs"
+  },
+  "engines": {
+    "node": ">=20.3.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "firecrawl",
+    "web-search",
+    "web-fetch",
+    "scraping",
+    "cordis"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xyonium/dsh-web-firecrawl.git"
+  },
+  "bugs": {
+    "url": "https://github.com/xyonium/dsh-web-firecrawl/issues"
+  },
+  "homepage": "https://github.com/xyonium/dsh-web-firecrawl#readme"
+}

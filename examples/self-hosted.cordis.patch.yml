@@ -1,0 +1,8 @@
+# Self-hosted Firecrawl: no API key at all (the instance checks nothing).
+# Put this in <DSH_HOME>/profiles/web/cordis.patch.yml, or set the two variables
+# in a project `.env` instead — the plugin reads them from the launch environment,
+# so a patch is not required.
+- insert:
+    - id: web-firecrawl
+      config:
+        baseURL: https://firecrawl.example.com
