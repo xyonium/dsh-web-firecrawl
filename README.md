@@ -223,9 +223,18 @@ Releases go through `.github/workflows/publish.yml` on a `v*` tag, using npm **t
    npm trust github <package> --file publish.yml --repository <owner>/<repo> --allow-publish
    ```
 
-   Both `--file` (workflow file name) and `--repository` (must match `repository.url` in
-   package.json) are checked. Then optionally: Settings → Publishing access →
-   *Require two-factor authentication and disallow tokens*.
+   **`--allow-publish` is not optional.** Trusted-publisher configurations created after
+   2026-09-03 default to **`npm stage publish` only**; without explicitly allowing direct
+   publishing, a tag-triggered `npm publish` is rejected. The website equivalent is the
+   "Allow npm publish" checkbox on the Trusted Publisher form.
+
+   Both `--file` (workflow file name, including the extension) and `--repository` (which must match
+   `repository.url` in package.json) are validated **only at publish time** — npm does not verify
+   them when you save, so a typo surfaces later as `ENEEDAUTH`.
+   The CLI command needs npm ≥ 11.15.0.
+
+   Then optionally: Settings → Publishing access → *Require two-factor authentication and disallow
+   tokens* (trusted publishers keep working — they use OIDC, not tokens).
 
 After that, a release is:
 
