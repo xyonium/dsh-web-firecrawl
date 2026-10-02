@@ -6,9 +6,14 @@ on:
 
 # Publishes with npm trusted publishing (OIDC) — no long-lived token.
 #
-# One-time setup, after the FIRST version exists on the registry:
+# One-time setup, after the FIRST version exists on the registry (npm has no
+# "pending publisher" for a package that does not exist yet — configuring trust
+# first fails with `404 Package not found`):
 #   1. npmjs.com → the package → Settings → Trusted Publisher → GitHub Actions
-#      (organization/user + repository + workflow file name: publish.yml)
+#      (organization/user + repository + workflow file name: publish.yml),
+#      or the CLI equivalent:
+#        npm trust github <package> --file publish.yml \
+#          --repository <owner>/<repo> --allow-publish
 #   2. then Settings → Publishing access → "Require two-factor authentication and
 #      disallow tokens" (OIDC keeps working)
 #
