@@ -317,7 +317,7 @@ const reset = () => { calls.length = 0; probes = 0; handler = () => { throw new 
 }
 
 
-// 13. 无 key 部署（rotator 注入凭据）+ 余额下限守卫
+// 13. 无 key 部署（代理注入凭据）+ 余额下限守卫
 {
   reset()
   const mod = await fresh()
@@ -331,7 +331,7 @@ const reset = () => { calls.length = 0; probes = 0; handler = () => { throw new 
   }
   mod.apply({
     web: { registerSearchProvider: (p) => { reg.search = p }, registerFetchProvider: () => {} },
-    get: (slot) => (slot === 'launchEnvironment' ? { get: (n) => (n === 'FIRECRAWL_BASE_URL' ? { value: 'https://rotator.example/firecrawl' } : undefined) } : undefined),
+    get: (slot) => (slot === 'launchEnvironment' ? { get: (n) => (n === 'FIRECRAWL_BASE_URL' ? { value: 'https://keyless-proxy.example/firecrawl' } : undefined) } : undefined),
     inject: () => {},
   }, { enrichTopK: 0 })            // 注意：既没有 apiKey，也没有 config.baseURL
   check('无 key + 显式 baseURL → 仍可用', reg.search.available() === true)
@@ -355,7 +355,7 @@ const reset = () => { calls.length = 0; probes = 0; handler = () => { throw new 
     return searchOk([{ url: 'https://m.example/2', title: 'T', description: 'd'.repeat(400) }])
   }
   mod3.apply({ web: { registerSearchProvider: (p) => { reg3.search = p }, registerFetchProvider: () => {} }, inject: () => {} },
-    { baseURL: 'https://rotator.example/firecrawl', minRemainingCredits: 200, enrichTopK: 0 })
+    { baseURL: 'https://keyless-proxy.example/firecrawl', minRemainingCredits: 200, enrichTopK: 0 })
   let e = ''
   try { await reg3.search.search({ query: 'low balance', maxResults: 3 }) } catch (err) { e = err.message }
   check('余额低于 minRemainingCredits → 拦截', /only 12 credits left/.test(e), e.slice(0, 60))
@@ -395,7 +395,7 @@ const reset = () => { calls.length = 0; probes = 0; handler = () => { throw new 
     web: { registerSearchProvider: (p) => { reg2.search = p }, registerFetchProvider: () => {} },
     logger: { warn: (m) => w2.push(m) },
     inject: () => {},
-  }, { baseURL: 'https://rotator.example/firecrawl', enrichTopK: 0 })
+  }, { baseURL: 'https://keyless-proxy.example/firecrawl', enrichTopK: 0 })
   await reg2.search.search({ query: 'private endpoint', maxResults: 3 })
   check('私有端点 → 不告警', w2.length === 0, `warnings=${w2.length}`)
 }

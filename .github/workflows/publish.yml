@@ -4,20 +4,32 @@ on:
   push:
     tags: ['v*']
 
+# Publishes with npm trusted publishing (OIDC) — no long-lived token.
+#
+# One-time setup, after the FIRST version exists on the registry:
+#   1. npmjs.com → the package → Settings → Trusted Publisher → GitHub Actions
+#      (organization/user + repository + workflow file name: publish.yml)
+#   2. then Settings → Publishing access → "Require two-factor authentication and
+#      disallow tokens" (OIDC keeps working)
+#
+# Bootstrapping the very first version therefore has to happen outside this
+# workflow (a local `npm publish` with an account that has 2FA).
+#
+# Provenance is attached automatically for a public repo publishing a public
+# package; `repository.url` in package.json must match this repo exactly.
 jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write # npm provenance / trusted publishing
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org
+      # Trusted publishing needs npm >= 11.5.1; setup-node ships a recent npm.
+      - run: npm install --global npm@latest
       - run: npm test
-      - name: Publish
-        run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: npm publish
