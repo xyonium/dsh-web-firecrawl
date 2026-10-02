@@ -202,6 +202,30 @@ dsh --profile web --dump-config | grep -A3 '^- id: web$'
 | every call is slow | `enrichTopK` is upgrading results (see the timeout section above) |
 | `budget … exhausted` | a cap fired; on a self-hosted instance set `billingMode: unmetered` |
 
+## Publishing (maintainers)
+
+The package is published to **registry.npmjs.org** — not GitHub Packages. GitHub's npm registry
+requires an access token to *install* even public packages
+([docs](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry):
+"You need an access token to publish, install, and delete private, internal, and public packages"),
+which would turn a one-command install into account + PAT + `~/.npmrc` setup for every user.
+
+Releases go through `.github/workflows/publish.yml` on a `v*` tag, using npm **trusted publishing**
+(OIDC) — no long-lived token, provenance attached automatically. Two one-time steps:
+
+1. The **first** version has to be published outside CI (`npm login && npm publish`) because a
+   trusted publisher is configured on a package that already exists.
+2. Then on npmjs.com: package → Settings → Trusted Publisher → GitHub Actions
+   (this repository, workflow `publish.yml`), and optionally
+   Settings → Publishing access → *Require two-factor authentication and disallow tokens*.
+
+After that, a release is:
+
+```sh
+npm version patch        # or minor / major
+git push --follow-tags   # CI publishes on the v* tag
+```
+
 ## Tests
 
 ```sh
